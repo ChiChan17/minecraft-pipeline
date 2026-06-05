@@ -9,7 +9,7 @@ The primary goal of this pipeline is to automate the manual tasks associated wit
 The system relies on a two-phase architecture:
 * **(Pulumi & Python):** Instead of manually clicking buttons inside the AWS Web Management Console, the underlying infrastructure is written programmatically using Python. When executed, Pulumi interacts with the cloud provider APIs to guarantee state management, build a Virtual Private Cloud network mapping, define security groups, and boot a dedicated Ubuntu EC2 compute node.
 
-* ** (Ansible):** Once the infrastructure is alive and reporting an operational IPv4 address, execution drops to Ansible. Ansible establishes a SSH connection to the remote compute node. Without human intervention, it installs the headless Java Virtual Machine execution runtime environment, builds isolated system file directories, sets up the configurations, and network endpoints, and kicks off execution.
+* **(Ansible):** Once the infrastructure is alive and reporting an operational IPv4 address, execution drops to Ansible. Ansible establishes a SSH connection to the remote compute node. Without human intervention, it installs the headless Java Virtual Machine execution runtime environment, builds isolated system file directories, sets up the configurations, and network endpoints, and kicks off execution.
 
 ---
 
