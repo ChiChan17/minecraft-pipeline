@@ -1,0 +1,56 @@
+---
+- name: Provision Minecraft Server Environment
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: Update apt tracking index cache
+      apt:
+        update_cache: yes
+
+    - name: Install OpenJDK Headless Java runtime environment
+      apt:
+        name: openjdk-21-jre-headless
+        state: present
+
+    - name: Create dedicated workspace folder for server runtime binaries
+      file:
+        path: /opt/minecraft
+        state: directory
+        mode: '0755'
+
+    - name: Download official Mojang server jar
+      get_url:
+        url: https://piston-data.mojang.com/v1/objects/4707d00eb834b446575d89a61a11b5d548d8c001/server.jar
+        dest: /opt/minecraft/server.jar
+
+    - name: Auto-accept the Minecraft EULA
+      copy:
+        content: "eula=true"
+        dest: /opt/minecraft/eula.txt
+
+    - name: Create systemd service for Minecraft
+      copy:
+        dest: /etc/systemd/system/minecraft.service
+        content: |
+          [Unit]
+          Description=Minecraft Server
+          After=network.target
+
+          [Service]
+          WorkingDirectory=/opt/minecraft
+          ExecStart=/usr/bin/java -Xmx1024M -Xms1024M -jar server.jar nogui
+          ExecStop=/bin/kill -SIGINT $MAINPID
+          Restart=on-failure
+          User=root
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Enable and start Minecraft service
+      systemd:
+        name: minecraft
+        enabled: yes
+        state: started
+        daemon_reload: yes

@@ -1,0 +1,2 @@
+[all]
+16.144.237.142 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
